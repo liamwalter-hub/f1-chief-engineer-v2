@@ -2,7 +2,7 @@
 // F1 CHIEF ENGINEER - UI Controller
 // ============================================================
 
-const { generateSeason, generateBrief, simulateRace, applyAllocations, COMPONENTS } = window.GameEngine;
+const { generateSeason, generateBrief, simulateRace, applyAllocations, COMPONENTS } = window.GameEngine || {};
 
 let season = null;
 let currentAllocations = {};
