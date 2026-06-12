@@ -2,14 +2,13 @@
 // F1 CHIEF ENGINEER - UI Controller
 // ============================================================
 
-const { generateSeason, generateBrief, simulateRace, applyAllocations, COMPONENTS } = window.GameEngine || {};
-
 let season = null;
 let currentAllocations = {};
 
 // ── HELPERS ─────────────────────────────────────────────────
 
 const $ = id => document.getElementById(id);
+
 const showScreen = id => {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   $(id).classList.add('active');
@@ -30,7 +29,7 @@ const circuitTypeLabel = t => ({
 })[t] || t;
 
 function buildSpecsHTML(specs, prevSpecs) {
-  return Object.entries(COMPONENTS).map(([key, comp]) => {
+  return Object.entries(window.GameEngine.COMPONENTS).map(([key, comp]) => {
     const val = specs[key];
     const prev = prevSpecs ? prevSpecs[key] : val;
     const delta = val - prev;
@@ -49,7 +48,6 @@ function buildSpecsHTML(specs, prevSpecs) {
 // ── TITLE SCREEN ─────────────────────────────────────────────
 
 function initTitleScreen() {
-  // Generate random seed on load
   $('seed-input').value = randomSeed();
 
   $('btn-random-seed').addEventListener('click', () => {
@@ -116,14 +114,12 @@ function initGameScreen() {
 function renderSidebar() {
   const { team, tp, remainingBudget, points, calendar, results, currentRound } = season;
 
-  // Team info
   document.querySelector('.team-dot').style.background = team.color;
   $('sidebar-team').textContent = team.name;
   $('sidebar-budget').textContent = `€${Math.max(0, remainingBudget).toFixed(1)}M`;
   $('sidebar-points').textContent = points;
   $('sidebar-tp').textContent = `${tp.avatar} ${tp.name}`;
 
-  // Calendar
   const calEl = $('calendar-mini');
   calEl.innerHTML = calendar.map((c, i) => {
     const result = results[i];
@@ -149,9 +145,8 @@ function renderSidebar() {
 function renderRound() {
   const circuit = season.calendar[season.currentRound];
   const round = season.currentRound + 1;
-  const brief = generateBrief(season);
+  const brief = window.GameEngine.generateBrief(season);
 
-  // Top bar
   $('top-round-badge').textContent = `Round ${round} / ${season.calendar.length}`;
   $('top-circuit-name').textContent = `${circuit.icon} ${circuit.name} Grand Prix`;
   $('top-circuit-meta').innerHTML = `
@@ -160,7 +155,6 @@ function renderRound() {
     <span>${circuit.downforce} downforce</span>
   `;
 
-  // Brief
   $('brief-tone').textContent = brief.tone;
   $('brief-demand').textContent = brief.demand;
   $('brief-constraint').textContent = brief.constraint;
@@ -168,25 +162,21 @@ function renderRound() {
   $('brief-event').textContent = brief.eventText;
   $('brief-event').style.display = brief.eventText ? 'block' : 'none';
 
-  // Current specs
   $('current-specs').innerHTML = buildSpecsHTML(season.currentSpecs, season.currentSpecs);
 
-  // Allocations
   currentAllocations = {};
-  Object.keys(COMPONENTS).forEach(k => currentAllocations[k] = 0);
+  Object.keys(window.GameEngine.COMPONENTS).forEach(k => currentAllocations[k] = 0);
   renderAllocations();
 
-  // Race button
   $('btn-race').onclick = handleRace;
 }
 
 function renderAllocations() {
   const grid = $('allocation-grid');
   const budget = season.remainingBudget;
-  const totalAlloc = Object.values(currentAllocations).reduce((a, b) => a + b, 0);
-  const roundBudget = Math.round(budget * 0.45); // 45% of remaining available per round
+  const roundBudget = Math.round(budget * 0.45);
 
-  grid.innerHTML = Object.entries(COMPONENTS).map(([key, comp]) => {
+  grid.innerHTML = Object.entries(window.GameEngine.COMPONENTS).map(([key, comp]) => {
     const val = currentAllocations[key] || 0;
     const currentSpec = season.currentSpecs[key];
     const maxAlloc = Math.min(roundBudget, 30);
@@ -215,8 +205,7 @@ window.updateAlloc = function(component, value) {
 function updateBudgetSummary() {
   const total = Object.values(currentAllocations).reduce((a, b) => a + b, 0);
   const remaining = season.remainingBudget - total;
-  const el = $('budget-spend');
-  el.textContent = `€${total}M`;
+  $('budget-spend').textContent = `€${total}M`;
   const remEl = $('budget-remaining');
   remEl.textContent = `€${Math.max(0, remaining).toFixed(1)}M remaining`;
   remEl.className = remaining < 0 ? 'budget-figure over' : 'budget-figure';
@@ -225,13 +214,13 @@ function updateBudgetSummary() {
 // ── RACE HANDLER ─────────────────────────────────────────────
 
 function handleRace() {
-  const { newSpecs, totalCost } = applyAllocations(season, currentAllocations);
+  const { newSpecs, totalCost } = window.GameEngine.applyAllocations(season, currentAllocations);
   const prevSpecs = { ...season.currentSpecs };
 
   season.currentSpecs = newSpecs;
   season.remainingBudget = Math.max(0, season.remainingBudget - totalCost);
 
-  const result = simulateRace(season, currentAllocations);
+  const result = window.GameEngine.simulateRace(season, currentAllocations);
   season.results.push(result);
   season.points += result.points;
 
@@ -251,10 +240,7 @@ function showResultModal(result, prevSpecs) {
   pointsEl.textContent = result.points > 0 ? `+${result.points} PTS` : 'No points';
   pointsEl.className = result.points > 0 ? 'result-points-badge' : 'result-points-badge zero';
 
-  // TP reaction
   $('modal-tp-text').textContent = getTPReaction(pos);
-
-  // Spec changes
   $('result-spec-changes').innerHTML = buildSpecsHTML(season.currentSpecs, prevSpecs);
 
   $('modal-overlay').classList.add('open');
@@ -325,7 +311,7 @@ function showEndScreen() {
 // ── BOOT ─────────────────────────────────────────────────────
 
 function startGame(seed) {
-  season = generateSeason(seed);
+  season = window.GameEngine.generateSeason(seed);
   showIntro();
 }
 
