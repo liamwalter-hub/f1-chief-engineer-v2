@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 Chief Engineer</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       SCREEN 1: TITLE
+  ══════════════════════════════════════════ -->
+  <section id="screen-title" class="screen">
+    <div class="title-inner">
+
+      <!-- Inline F1 car SVG -->
+      <div class="car-hero">
+        <svg viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <!-- Halo -->
+          <ellipse cx="240" cy="72" rx="38" ry="6" fill="none" stroke="#3A3A42" stroke-width="5"/>
+          <!-- Main body -->
+          <path d="M80 100 Q100 60 180 56 L300 56 Q380 60 400 100 L370 108 L110 108 Z" fill="#1E1E22" stroke="#2A2A30" stroke-width="1.5"/>
+          <!-- Nose cone -->
+          <path d="M80 100 Q60 100 30 103 L20 100 Q50 96 80 100Z" fill="#E8002D"/>
+          <!-- Cockpit -->
+          <path d="M195 56 Q200 38 240 35 Q280 38 285 56Z" fill="#0D0D0F" stroke="#3A3A42" stroke-width="1"/>
+          <!-- Front wing -->
+          <path d="M20 103 L10 107 L10 112 L95 112 L95 108 L30 108 Z" fill="#E8002D"/>
+          <!-- Rear wing pillar -->
+          <rect x="356" y="68" width="8" height="30" fill="#2A2A30"/>
+          <!-- Rear wing -->
+          <rect x="330" y="60" width="62" height="10" rx="2" fill="#E8002D"/>
+          <rect x="330" y="72" width="62" height="4" rx="1" fill="#C00025"/>
+          <!-- Front wheels -->
+          <ellipse cx="105" cy="112" rx="22" ry="22" fill="#161618" stroke="#2A2A30" stroke-width="3"/>
+          <ellipse cx="105" cy="112" rx="12" ry="12" fill="#0D0D0F"/>
+          <ellipse cx="105" cy="112" rx="5" ry="5" fill="#E8002D"/>
+          <!-- Rear wheels -->
+          <ellipse cx="368" cy="112" rx="26" ry="26" fill="#161618" stroke="#2A2A30" stroke-width="3"/>
+          <ellipse cx="368" cy="112" rx="14" ry="14" fill="#0D0D0F"/>
+          <ellipse cx="368" cy="112" rx="5" ry="5" fill="#E8002D"/>
+          <!-- Engine cover detail -->
+          <path d="M200 58 L280 58 L285 68 L195 68 Z" fill="#161618"/>
+          <!-- Sidepod vents -->
+          <rect x="160" y="72" width="2" height="20" rx="1" fill="#3A3A42"/>
+          <rect x="165" y="72" width="2" height="20" rx="1" fill="#3A3A42"/>
+          <rect x="170" y="72" width="2" height="20" rx="1" fill="#3A3A42"/>
+          <!-- DRS flicker -->
+          <rect x="330" y="58" width="62" height="3" rx="1" fill="#FF003350" opacity="0.7">
+            <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.5s" repeatCount="indefinite"/>
+          </rect>
+          <!-- Speed lines -->
+          <line x1="0" y1="88" x2="18" y2="88" stroke="#E8002D" stroke-width="1.5" opacity="0.6">
+            <animate attributeName="opacity" values="0.6;0;0.6" dur="1.2s" repeatCount="indefinite"/>
+          </line>
+          <line x1="0" y1="95" x2="12" y2="95" stroke="#E8002D" stroke-width="1" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0;0.4" dur="1.2s" begin="0.3s" repeatCount="indefinite"/>
+          </line>
+          <line x1="0" y1="102" x2="8" y2="102" stroke="#E8002D" stroke-width="0.8" opacity="0.3">
+            <animate attributeName="opacity" values="0.3;0;0.3" dur="1.2s" begin="0.6s" repeatCount="indefinite"/>
+          </line>
+        </svg>
+      </div>
+
+      <p class="title-eyebrow">2025 F1 World Championship</p>
+      <h1 class="title-main">Chief<br><span>Engineer</span></h1>
+      <p class="title-sub">Design. Build. Race. Repeat.</p>
+
+      <div class="seed-form">
+        <label for="seed-input">Season Seed — share with friends to compare results</label>
+        <div class="seed-row">
+          <input
+            type="text"
+            id="seed-input"
+            class="seed-input"
+            maxlength="20"
+            placeholder="E.g. APEX24 or REDBULL99"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="btn-random-seed" class="btn-random" title="Generate random seed">🎲</button>
+        </div>
+        <p class="seed-hint">Same seed = same team, TP, calendar &amp; events every time</p>
+      </div>
+
+      <button id="btn-start" class="btn-primary">Start Season</button>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       SCREEN 2: INTRO / TEAM REVEAL
+  ══════════════════════════════════════════ -->
+  <section id="screen-intro" class="screen">
+    <div style="max-width:640px;width:100%;margin:auto;padding:2rem;">
+
+      <div class="intro-header">
+        <h2 style="font-family:var(--font-display);font-size:0.85rem;letter-spacing:0.1em;color:var(--titanium);text-transform:uppercase;">Your Season Brief</h2>
+        <div id="intro-seed-badge" class="seed-badge"></div>
+      </div>
+
+      <!-- Team card -->
+      <div class="team-card" style="background:var(--carbon-mid);">
+        <div class="team-card-header" style="background:var(--carbon-mid);">
+          <div class="team-colour-bar" id="intro-team-bar"></div>
+          <div>
+            <div class="team-name" id="intro-team-name"></div>
+            <div class="team-season" id="intro-team-season"></div>
+          </div>
+        </div>
+        <div class="team-card-body">
+          <div class="info-block">
+            <label>Driver 1</label>
+            <div class="value" id="intro-driver-1"></div>
+          </div>
+          <div class="info-block">
+            <label>Driver 2</label>
+            <div class="value" id="intro-driver-2"></div>
+          </div>
+          <div class="info-block">
+            <label>Season Budget</label>
+            <div class="value text-green" id="intro-budget"></div>
+          </div>
+          <div class="info-block">
+            <label>Rounds</label>
+            <div class="value">23 races</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TP card -->
+      <div class="tp-card">
+        <div class="tp-avatar" id="intro-tp-avatar"></div>
+        <div>
+          <div class="tp-name" id="intro-tp-name"></div>
+          <div class="tp-trait" id="intro-tp-trait"></div>
+          <div class="tp-quote" id="intro-tp-quote"></div>
+        </div>
+      </div>
+
+      <!-- Starting specs -->
+      <div style="margin-bottom:1rem;">
+        <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.15em;color:var(--titanium);text-transform:uppercase;margin-bottom:0.75rem;">Car Specification — Start of Season</p>
+        <div class="specs-grid" id="intro-specs"></div>
+      </div>
+
+      <button id="btn-to-game" class="btn-primary">Accept Brief — Start Season</button>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       SCREEN 3: GAME
+  ══════════════════════════════════════════ -->
+  <section id="screen-game" class="screen">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">F1 Chief<br><span>Engineer</span></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Team</div>
+        <div class="sidebar-team">
+          <span class="team-dot"></span>
+          <span id="sidebar-team"></span>
+        </div>
+        <div class="sidebar-label" style="margin-top:0.75rem;">TP</div>
+        <div style="font-size:0.78rem;color:var(--silver);" id="sidebar-tp"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Budget Remaining</div>
+        <div class="sidebar-budget" id="sidebar-budget"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Constructor Points</div>
+        <div class="sidebar-points" id="sidebar-points"></div>
+      </div>
+
+      <div class="calendar-mini" id="calendar-mini"></div>
+    </nav>
+
+    <!-- Main -->
+    <main class="main-content">
+
+      <!-- Top bar -->
+      <header class="top-bar">
+        <div class="round-badge" id="top-round-badge"></div>
+        <div class="circuit-name" id="top-circuit-name"></div>
+        <div class="circuit-meta" id="top-circuit-meta"></div>
+      </header>
+
+      <!-- TP Brief -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">📋</span>
+          <span class="panel-title">Team Principal Brief</span>
+        </div>
+        <div class="panel-body">
+          <div class="brief-tone" id="brief-tone"></div>
+          <div class="brief-demand" id="brief-demand"></div>
+          <div class="brief-constraint" id="brief-constraint"></div>
+          <div class="brief-pressure" id="brief-pressure"></div>
+          <div class="brief-event" id="brief-event" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Current car specs -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">🏎️</span>
+          <span class="panel-title">Current Car Specification</span>
+        </div>
+        <div class="panel-body">
+          <div class="specs-grid" id="current-specs"></div>
+        </div>
+      </div>
+
+      <!-- Allocations -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-icon">🔧</span>
+          <span class="panel-title">Engineering Allocations</span>
+        </div>
+        <div class="panel-body">
+          <p style="font-size:0.82rem;color:var(--titanium);margin-bottom:1.25rem;">
+            Allocate your development budget across components. Each million spent improves the spec.
+            Right-slider = more investment. Balance the brief's demands against your budget.
+          </p>
+          <div class="allocation-grid" id="allocation-grid"></div>
+
+          <div class="budget-summary">
+            <div>
+              <div class="budget-label">This Round's Spend</div>
+              <div class="budget-figure" id="budget-spend">€0M</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="budget-label">After Spend</div>
+              <div class="budget-figure" id="budget-remaining"></div>
+            </div>
+          </div>
+
+          <button class="btn-race" id="btn-race">Go to Race</button>
+        </div>
+      </div>
+
+    </main>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       MODAL: RACE RESULT
+  ══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-result-header">
+        <div>
+          <span class="result-position" id="result-position"></span><span class="result-suffix" id="result-suffix"></span>
+        </div>
+        <div class="result-circuit" id="result-circuit"></div>
+        <div id="result-points" class="result-points-badge"></div>
+      </div>
+
+      <div style="padding:1.25rem 2rem;border-top:1px solid var(--steel);">
+        <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.15em;color:var(--titanium);text-transform:uppercase;margin-bottom:0.75rem;">Car Development This Round</p>
+        <div class="specs-grid" id="result-spec-changes"></div>
+      </div>
+
+      <div class="modal-tp-reaction">
+        <div class="modal-tp-label">Team Principal Reaction</div>
+        <div class="modal-tp-text" id="modal-tp-text"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-continue" id="btn-continue">Next Race →</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       SCREEN 4: SEASON END
+  ══════════════════════════════════════════ -->
+  <section id="screen-end" class="screen">
+    <div class="end-card">
+      <div class="end-trophy" id="end-trophy"></div>
+      <h1 class="end-title" id="end-title"></h1>
+      <p class="end-subtitle" id="end-subtitle"></p>
+
+      <div class="end-stats">
+        <div class="end-stat">
+          <div class="end-stat-value text-amber" id="end-points"></div>
+          <div class="end-stat-label">Constructor Points</div>
+        </div>
+        <div class="end-stat">
+          <div class="end-stat-value text-green" id="end-wins"></div>
+          <div class="end-stat-label">Race Wins</div>
+        </div>
+        <div class="end-stat">
+          <div class="end-stat-value" id="end-podiums"></div>
+          <div class="end-stat-label">Podiums</div>
+        </div>
+      </div>
+
+      <button id="btn-start-new" class="btn-primary" onclick="document.getElementById('btn-new-season').click()">Try a New Seed</button>
+      <button id="btn-new-season" class="btn-new-season">↩ Back to Title</button>
+    </div>
+  </section>
+
+
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
